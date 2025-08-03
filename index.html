@@ -123,12 +123,11 @@
       });
 
       const data = await response.json();
-
-      // Show full raw response for debugging on mobile
-      appendMessage("🔍 Raw API response:\n" + JSON.stringify(data, null, 2), 'bot');
+      const reply = data.response || '🤖 No response received.';
+      appendMessage(reply, 'bot');
 
     } catch (error) {
-      appendMessage('⚠️ Error connecting to AI.', 'bot');
+      appendMessage('⚠️ Error reaching AI agent.', 'bot');
     }
   }
 
