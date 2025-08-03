@@ -78,9 +78,8 @@
   </div>
 
   <script>
-    const API_URL = "https://aifogdppvwruvypzkxoj.supabase.co/functions/v1/chat-agent/api";
-    const AGENT_ID = "2ffb3593-3564-484a-9c8e-dac70bf199af";
-    // const API_KEY = "YOUR_API_KEY"; // Optional
+    const API_URL = "https://aifogdppvwruvypzkxoj.supabase.co/functions/v1/chat-agent/api?agent_id=2ffb3593-3564-484a-9c8e-dac70bf199af";
+    // const API_KEY = "YOUR_API_KEY"; // Uncomment if required
 
     const chatWindow = document.getElementById("chatWindow");
     const messageInput = document.getElementById("messageInput");
@@ -110,14 +109,20 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-Agent-ID": AGENT_ID,
-            // "Authorization": `Bearer ${API_KEY}`, // if required
+            // "Authorization": `Bearer ${API_KEY}` // Uncomment if required
           },
           body: JSON.stringify({
             message: userMessage,
             conversationHistory: conversationHistory
           })
         });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          appendMessage("assistant", `Error ${response.status}: ${errorText}`);
+          console.error("Server response:", errorText);
+          return;
+        }
 
         const data = await response.json();
 
@@ -127,16 +132,16 @@
         } else {
           appendMessage("assistant", "Error: No response from agent.");
         }
+
       } catch (err) {
-        appendMessage("assistant", "Error: Couldn't contact the server.");
-        console.error(err);
+        appendMessage("assistant", "Network error. See console for details.");
+        console.error("Fetch error:", err);
       }
 
       sendButton.disabled = false;
     }
 
     sendButton.addEventListener("click", sendMessage);
-
     messageInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") sendMessage();
     });
@@ -144,5 +149,3 @@
 
 </body>
 </html>
-
-
