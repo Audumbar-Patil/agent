@@ -2,186 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AI Chat Agent</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My AI Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
     body {
-      background: #f7f7f7;
-      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .container {
-      max-width: 480px;
-      min-width: 300px;
-      background: white;
-      padding: 24px;
-      border-radius: 8px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
       display: flex;
       flex-direction: column;
-      min-height: 600px;
+      height: 100vh;
+      background-color: #f4f4f4;
     }
-    h2 {
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
       text-align: center;
-      margin: 0 0 12px 0;
-      font-weight: normal;
-      color: #333;
     }
-    #chatWindow {
-      flex: 1 1 0;
-      background: #fafafa;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 12px;
-      margin-bottom: 10px;
-      height: 380px;
-      overflow-y: auto;
-      font-size: 15px;
-    }
-    .message {
-      margin: 9px 0;
-      padding: 10px 13px;
-      border-radius: 6px;
-      display: inline-block;
-      max-width: 75%;
-      word-break: break-word;
-    }
-    .user {
-      background: #d3f2cb;
-      color: #244d14;
-      align-self: flex-end;
-      text-align: right;
-    }
-    .assistant {
-      background: #e6e6e8;
-      color: #212121;
-      align-self: flex-start;
-      text-align: left;
-    }
-    #inputArea {
-      display: flex;
-      gap: 10px;
-    }
-    #messageInput {
+
+    #chat-container {
       flex: 1;
-      padding: 12px;
-      font-size: 16px;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      border-radius: 8px;
+      max-width: 80%;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      background-color: #DCF8C6;
+      align-self: flex-end;
+    }
+
+    .bot {
+      background-color: #F1F0F0;
+      align-self: flex-start;
+    }
+
+    #input-container {
+      display: flex;
+      padding: 1rem;
+      background-color: #eee;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 0.75rem;
       border: 1px solid #ccc;
       border-radius: 5px;
-      outline: none;
-      transition: border 0.2s;
+      font-size: 1rem;
     }
-    #messageInput:focus {
-      border-color: #0790fa;
-    }
-    #sendButton {
-      padding: 12px 20px;
+
+    #send-btn {
+      margin-left: 0.5rem;
+      padding: 0.75rem 1rem;
+      background-color: #4CAF50;
+      color: white;
       border: none;
       border-radius: 5px;
-      background: #226ce6;
-      color: white;
-      font-size: 16px;
-      font-weight: 500;
       cursor: pointer;
-      transition: background 0.18s;
+      font-weight: bold;
     }
-    #sendButton:disabled {
-      background: #999;
-      cursor: not-allowed;
+
+    #send-btn:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>AI Chat Agent</h2>
-    <div id="chatWindow"></div>
-    <form id="inputArea" autocomplete="off" onsubmit="return false;">
-      <input type="text" id="messageInput" placeholder="Type your message..." autocomplete="off" />
-      <button type="button" id="sendButton">Send</button>
-    </form>
-  </div>
 
-  <script>
-    // Replace with your exact API endpoint including agent_id
-    const API_URL = "https://aifogdppvwruvypzkxoj.supabase.co/functions/v1/chat-agent/api?agent_id=2ffb3593-3564-484a-9c8e-dac70bf199af";
+<header>
+  <h2>🤖 My AI Chatbot</h2>
+</header>
 
-    const chatWindow = document.getElementById("chatWindow");
-    const messageInput = document.getElementById("messageInput");
-    const sendButton = document.getElementById("sendButton");
-    const inputForm = document.getElementById("inputArea");
+<div id="chat-container"></div>
 
-    // For conversation context (optional, can be used by backend)
-    let conversationHistory = [];
+<div id="input-container">
+  <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" />
+  <button id="send-btn">Send</button>
+</div>
 
-    function appendMessage(role, content) {
-      const msgDiv = document.createElement("div");
-      msgDiv.className = "message " + role;
-      msgDiv.textContent = content;
-      chatWindow.appendChild(msgDiv);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+<script>
+  const chatContainer = document.getElementById('chat-container');
+  const userInput = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  const API_URL = 'https://aifogdppvwruvypzkxoj.supabase.co/functions/v1/chat-agent/api?agent_id=2ffb3593-3564-484a-9c8e-dac70bf199af';
+
+  function appendMessage(text, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', sender);
+    messageDiv.textContent = text;
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    appendMessage(message, 'user');
+    userInput.value = '';
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      const reply = data.reply || data.message || 'No response from AI.';
+      appendMessage(reply, 'bot');
+    } catch (error) {
+      appendMessage('⚠️ Error connecting to AI.', 'bot');
+      console.error(error);
     }
+  }
 
-    async function sendMessage() {
-      const userMessage = messageInput.value.trim();
-      if (!userMessage) return;
-      appendMessage("user", userMessage);
-      conversationHistory.push({ role: "user", content: userMessage });
-      messageInput.value = "";
-      sendButton.disabled = true;
-      messageInput.disabled = true;
-      try {
-        // Send only last 30 messages for context, if desired
-        const historyToSend = conversationHistory.slice(-30);
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: userMessage,
-            conversationHistory: historyToSend
-          })
-        });
-        if (!res.ok) {
-          const errText = await res.text();
-          appendMessage("assistant", `Error ${res.status}: ${errText}`);
-          sendButton.disabled = false;
-          messageInput.disabled = false;
-          messageInput.focus();
-          return;
-        }
-        const data = await res.json();
-        if (data.dresponse) {
-          appendMessage("assistant", data.dresponse);
-          conversationHistory.push({ role: "assistant", content: data.dresponse });
-        } else {
-          appendMessage("assistant", "Error: No response from agent.");
-        }
-      } catch (err) {
-        appendMessage("assistant", "Network error. See console for details.");
-        console.error(err);
-      }
-      sendButton.disabled = false;
-      messageInput.disabled = false;
-      messageInput.focus();
-    }
+  sendBtn.addEventListener('click', sendMessage);
+  userInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+</script>
 
-    // Send on button click
-    sendButton.addEventListener("click", sendMessage);
-
-    // Send on Enter key
-    messageInput.addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        sendMessage();
-        e.preventDefault();
-      }
-    });
-
-    // Autofocus input
-    window.onload = () => messageInput.focus();
-  </script>
 </body>
 </html>
