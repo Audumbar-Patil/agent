@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>My AI Chatbot</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { box-sizing: border-box; font-family: Arial, sans-serif; }
     body {
@@ -118,18 +118,17 @@
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message })
       });
 
       const data = await response.json();
-      const reply = data.reply || data.message || 'No response from AI.';
-      appendMessage(reply, 'bot');
+
+      // Show full raw response for debugging on mobile
+      appendMessage("🔍 Raw API response:\n" + JSON.stringify(data, null, 2), 'bot');
+
     } catch (error) {
       appendMessage('⚠️ Error connecting to AI.', 'bot');
-      console.error(error);
     }
   }
 
